@@ -21,6 +21,17 @@ sub process_args {
 }
 
 
+#######
+# Utils
+
+sub fatal {
+  my ($self, $mesg) = @_;
+  
+  print STDERR "FATAL: $mesg\n";
+  exit(1);
+}
+
+
 ###########################
 # Constructor and accessors
 #   boring stuff
