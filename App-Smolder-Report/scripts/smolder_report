@@ -1,0 +1,13 @@
+#!/usr/bin/perl -w
+
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
+use strict;
+use App::Smolder::Report;
+
+my $app = App::Smolder::Report->new;
+$app->process_args(@ARGV);
+exit( $app->run ? 0 : 1 );
+
+__END__
