@@ -5,13 +5,25 @@ use strict;
 
 our $VERSION = '0.01';
 
-sub process_args {
-  
-}
+
+###################
+# Smolder reporting
 
 sub run {
   
 }
+
+##################################
+# Deal with command line arguments
+
+sub process_args {
+  
+}
+
+
+###########################
+# Constructor and accessors
+#   boring stuff
 
 sub new {
   my $class = shift;
