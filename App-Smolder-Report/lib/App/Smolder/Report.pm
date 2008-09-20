@@ -5,6 +5,18 @@ use strict;
 
 our $VERSION = '0.01';
 
+sub process_args {
+  
+}
+
+sub run {
+  
+}
+
+sub new {
+  my $class = shift;
+  return bless {}, $class;
+}
 
 __END__
 
