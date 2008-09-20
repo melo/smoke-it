@@ -3,6 +3,13 @@ package App::Smolder::Report;
 use warnings;
 use strict;
 
+our $VERSION = '0.01';
+
+
+__END__
+
+=encoding utf8
+
 =head1 NAME
 
 App::Smolder::Report - The great new App::Smolder::Report!
@@ -13,24 +20,15 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
-
-
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
+    # You should use the smolder_report frontend really...
+    
     use App::Smolder::Report;
 
-    my $foo = App::Smolder::Report->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    my $app = App::Smolder::Report->new();
+    $app->process_args(@ARGV);
+    $app->run;
 
 =head1 FUNCTIONS
 
