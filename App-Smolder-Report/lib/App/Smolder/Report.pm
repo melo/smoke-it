@@ -2,6 +2,7 @@ package App::Smolder::Report;
 
 use warnings;
 use strict;
+use LWP::UserAgent;
 
 our $VERSION = '0.01';
 
@@ -21,6 +22,33 @@ sub run {
   $self->fatal("You must provide at least one report to upload")
     unless @ARGV;
   
+  return $self->_upload_reports(@ARGV);
+}
+
+sub _upload_reports {
+  my ($self, @reports) = @_;
+  
+  my $ua = LWP::UserAgent->new;
+  my $url
+    = $self->smolder_server
+    . '/app/developer_projects/process_add_report/'
+    . $self->project_id;
+  
+  foreach my $report_file (@reports) {
+    $self->fatal("Could not read report file '$report_file'")
+      unless -r $report_file;
+    
+    my $response = $ua->post(
+      $url,
+      'Content-Type' => 'form-data',
+      'Content'      => [
+        username => $self->username,
+        password => $self->password,
+        tags     => '',
+        report_file => [$report_file],
+      ],
+    );
+  }
 }
 
 
