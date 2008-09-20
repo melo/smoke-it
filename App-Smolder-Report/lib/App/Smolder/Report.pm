@@ -10,8 +10,25 @@ our $VERSION = '0.01';
 # Smolder reporting
 
 sub run {
+  my ($self) = @_;
+  
+  $self->_load_configs;
+  
+  $self->fatal("Required 'smolder_server' setting is empty or missing")
+    unless $self->smolder_server;
+  $self->fatal("Required 'project_id' setting is empty or missing")
+    unless $self->project_id;
+  $self->fatal("You must provide at least one report to upload")
+    unless @ARGV;
   
 }
+
+
+###################################
+# Configuration loading and merging
+
+sub _load_configs {}
+
 
 ##################################
 # Deal with command line arguments
