@@ -3,6 +3,7 @@ package App::Smolder::Report;
 use warnings;
 use strict;
 use LWP::UserAgent;
+use Getopt::Long;
 
 our $VERSION = '0.01';
 
@@ -62,7 +63,26 @@ sub _load_configs {}
 # Deal with command line arguments
 
 sub process_args {
+  my ($self) = @_;
   
+  my ($username, $password, $smolder_server, $project_id);
+  my $ok = GetOptions(
+    "username=s"       => \$username,
+    "password=s"       => \$password,
+    "smolder-server=s" => \$smolder_server,
+    "project-id=i"     => \$project_id,
+  );
+  exit(2) unless $ok;
+  
+  $smolder_server = "http://$smolder_server"
+    unless $smolder_server =~ m/^http/;
+  
+  $self->{username} = $username;
+  $self->{password} = $password;
+  $self->{smolder_server} = $smolder_server;
+  $self->{project_id} = $project_id;
+  
+  return;
 }
 
 
