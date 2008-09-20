@@ -20,6 +20,10 @@ sub run {
     unless $self->smolder_server;
   $self->fatal("Required 'project_id' setting is empty or missing")
     unless $self->project_id;
+  $self->fatal("Required 'username' setting is empty or missing")
+    unless $self->username;
+  $self->fatal("Required 'password' setting is empty or missing")
+    unless $self->password;
   $self->fatal("You must provide at least one report to upload")
     unless @ARGV;
   
