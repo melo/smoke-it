@@ -28,10 +28,12 @@ sub run {
 
 sub _upload_reports {
   my ($self, @reports) = @_;
+  my $server = $self->smolder_server;
+  my $reports_url;
   
   my $ua = LWP::UserAgent->new;
   my $url
-    = $self->smolder_server
+    = $server
     . '/app/developer_projects/process_add_report/'
     . $self->project_id;
   
@@ -49,7 +51,25 @@ sub _upload_reports {
         report_file => [$report_file],
       ],
     );
+    
+    if ($response->code == 302) {
+      if (! $reports_url) {
+        $reports_url = $response->header('Location');
+        $reports_url = "$server$reports_url"
+          unless $reports_url =~ m/^http/;
+      }
+      
+      print "Report '$report_file' sent successfully\n";
+    }
+    else {
+      $self->fatal(
+        "Could not upload report '$report_file'",
+        "HTTP Code: ".$response->code,
+        $response->message,
+      );
+    }
   }
+  print "\nSee all reports at $reports_url\n";
 }
 
 
@@ -90,9 +110,13 @@ sub process_args {
 # Utils
 
 sub fatal {
-  my ($self, $mesg) = @_;
+  my ($self, $mesg, @more) = @_;
   
   print STDERR "FATAL: $mesg\n";
+  foreach my $line (@more) {
+    print STDERR "  $line\n";
+  }
+  
   exit(1);
 }
 
