@@ -15,8 +15,15 @@ sub run {
 
 sub new {
   my $class = shift;
+  
   return bless {}, $class;
 }
+
+sub cfg            { return $_[0]{cfg}            }
+sub username       { return $_[0]{username}       }
+sub password       { return $_[0]{password}       }
+sub project_id     { return $_[0]{project_id}     }
+sub smolder_server { return $_[0]{smolder_server} }
 
 __END__
 
