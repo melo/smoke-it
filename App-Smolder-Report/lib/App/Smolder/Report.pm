@@ -143,7 +143,7 @@ __END__
 
 =head1 NAME
 
-App::Smolder::Report - The great new App::Smolder::Report!
+App::Smolder::Report - Report test runs to a smoke server
 
 =head1 VERSION
 
@@ -161,21 +161,6 @@ Version 0.01
     $app->process_args(@ARGV);
     $app->run;
 
-=head1 FUNCTIONS
-
-=head2 function1
-
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
 
 =head1 AUTHOR
 
