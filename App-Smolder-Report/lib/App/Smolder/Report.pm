@@ -30,16 +30,22 @@ sub _upload_reports {
   my ($self, @reports) = @_;
   my $server = $self->smolder_server;
   my $reports_url;
-  
+    
   my $ua = LWP::UserAgent->new;
   my $url
     = $server
     . '/app/developer_projects/process_add_report/'
     . $self->project_id;
   
+  REPORT_FILE:
   foreach my $report_file (@reports) {
     $self->fatal("Could not read report file '$report_file'")
       unless -r $report_file;
+  
+    if ($self->dry_run) {
+      print "Dry run: would POST to $url: $report_file\n";
+      next REPORT_FILE;
+    }
     
     my $response = $ua->post(
       $url,
@@ -69,7 +75,7 @@ sub _upload_reports {
       );
     }
   }
-  print "\nSee all reports at $reports_url\n";
+  print "\nSee all reports at $reports_url\n" if $reports_url;
 }
 
 
@@ -85,12 +91,13 @@ sub _load_configs {}
 sub process_args {
   my ($self) = @_;
   
-  my ($username, $password, $smolder_server, $project_id);
+  my ($username, $password, $smolder_server, $project_id, $dry_run);
   my $ok = GetOptions(
     "username=s"       => \$username,
     "password=s"       => \$password,
     "smolder-server=s" => \$smolder_server,
     "project-id=i"     => \$project_id,
+    "dry-run|n"          => \$dry_run,
   );
   exit(2) unless $ok;
   
@@ -101,6 +108,7 @@ sub process_args {
   $self->{password} = $password;
   $self->{smolder_server} = $smolder_server;
   $self->{project_id} = $project_id;
+  $self->{dry_run} = $dry_run;
   
   return;
 }
@@ -132,6 +140,7 @@ sub new {
 }
 
 sub cfg            { return $_[0]{cfg}            }
+sub dry_run        { return $_[0]{dry_run}        }
 sub username       { return $_[0]{username}       }
 sub password       { return $_[0]{password}       }
 sub project_id     { return $_[0]{project_id}     }
