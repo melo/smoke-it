@@ -21,6 +21,7 @@ cmp_deeply($cfg, {
   project_id     => 1,
   username       => 'user1',
   password       => 'pass1',
+  delete         => 1,
 });
 
 throws_ok sub {

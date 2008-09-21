@@ -9,6 +9,7 @@ requires 'LWP::UserAgent' => 0;
 requires 'Getopt::Long'   => 0;
 requires 'Carp::Clan'     => 0;
 requires 'Test::Most'     => 0;
+requires 'File::Temp'     => 0;
 requires 'Cwd'            => 0;
 
 # Meta

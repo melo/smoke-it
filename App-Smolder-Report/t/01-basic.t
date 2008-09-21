@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::Most qw( no_plan );
 use App::Smolder::Report;
+use File::Temp;
 
 my $sr = App::Smolder::Report->new;
 ok($sr);
@@ -73,6 +74,12 @@ cmp_deeply($LWP::UserAgent::last_post, [
     report_file => ['Makefile.PL'],
   ],
 ]);
+
+my $tmp = File::Temp->new( CLEANUP => 1);
+$sr->_merge_cfg_hash({ delete => 1 });
+lives_ok sub { $url = $sr->report($tmp->filename) };
+ok(! -e $tmp->filename);
+
 
 $LWP::UserAgent::error = [401, 'bad password'];
 $url = undef;

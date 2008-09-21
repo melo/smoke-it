@@ -79,6 +79,12 @@ sub _upload_reports {
       }
       
       $self->_log("Report '$report_file' sent successfully");
+      
+      if ($self->delete) {
+        if (!unlink($report_file)) {
+          $self->_log("WARNING: could not delete file $report_file: $!");
+        }
+      }
     }
     else {
       $self->_fatal(
@@ -157,7 +163,12 @@ sub _read_cfg_file {
 sub _merge_cfg_hash {
   my ($self, $cfg) = @_;
   
-  foreach my $cfg_key (qw/ smolder_server project_id username password /) {
+  my @valid_settings = qw{
+    smolder_server project_id
+    username password
+    delete
+  };
+  foreach my $cfg_key (@valid_settings) {
     next unless exists $cfg->{$cfg_key};
     $self->{$cfg_key} = delete $cfg->{$cfg_key};
   }
@@ -172,13 +183,14 @@ sub _merge_cfg_hash {
 sub process_args {
   my ($self) = @_;
   
-  my ($username, $password, $smolder_server, $project_id, $dry_run);
+  my ($username, $password, $smolder_server, $project_id, $dry_run, $delete);
   my $ok = GetOptions(
     "username=s"       => \$username,
     "password=s"       => \$password,
     "smolder-server=s" => \$smolder_server,
     "project-id=i"     => \$project_id,
     "dry-run|n"          => \$dry_run,
+    "delete"           => \$delete,
   );
   exit(2) unless $ok;
   
@@ -187,6 +199,7 @@ sub process_args {
   $self->{smolder_server} = $smolder_server;
   $self->{project_id} = $project_id;
   $self->{dry_run} = $dry_run;
+  $self->{delete} = $delete;
   
   $self->_load_configs;
   
@@ -252,6 +265,7 @@ sub new {
 sub dry_run        { return $_[0]{dry_run}        }
 sub username       { return $_[0]{username}       }
 sub password       { return $_[0]{password}       }
+sub delete         { return $_[0]{delete}         }
 sub project_id     { return $_[0]{project_id}     }
 sub smolder_server { return $_[0]{smolder_server} }
 sub run_as_api     { return $_[0]{run_as_api}     }
