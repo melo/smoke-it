@@ -120,6 +120,12 @@ sub _merge_cfg_file {
   return unless $cfg;
   
   $self->_merge_cfg_hash($cfg);
+  
+  if (%$cfg) {
+    my @bad_keys = sort keys %$cfg;
+    $self->fatal("Invalid configuration keys in $file:", @bad_keys);
+  }
+  
   return;
 }
 
@@ -153,9 +159,9 @@ sub _merge_cfg_hash {
   
   foreach my $cfg_key (qw/ smolder_server project_id username password /) {
     next unless exists $cfg->{$cfg_key};
-    $self->{$cfg_key} = $cfg->{$cfg_key};
+    $self->{$cfg_key} = delete $cfg->{$cfg_key};
   }
-  
+    
   return;
 }
 
