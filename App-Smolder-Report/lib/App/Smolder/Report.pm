@@ -123,7 +123,7 @@ sub _merge_cfg_file {
   
   if (%$cfg) {
     my @bad_keys = sort keys %$cfg;
-    $self->fatal("Invalid configuration keys in $file:", @bad_keys);
+    $self->_fatal("Invalid configuration keys in $file:", @bad_keys);
   }
   
   return;
