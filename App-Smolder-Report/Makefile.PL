@@ -1,0 +1,15 @@
+use inc::Module::Install;
+
+# Define metadata
+name     'App-Smolder-Report';
+all_from 'lib/App/Smolder/Report.pm';
+
+# Specific dependencies
+requires 'LWP::UserAgent' => 0;
+requires 'Getopt::Long'   => 0;
+requires 'Test::Most'     => 0;
+
+# Meta
+repository 'http://github.com/melo/perl-app-smolder-report';
+
+WriteAll;
