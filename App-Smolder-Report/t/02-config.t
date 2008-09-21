@@ -40,9 +40,18 @@ SKIP: {
   
   $sr = App::Smolder::Report->new;
   $sr->_load_configs;
-
   is($sr->smolder_server, 'smolder.example.com');
   is($sr->project_id,     45);
   is($sr->username,       'superme');
   is($sr->password,       'supersecret');
+  
+  
+  $sr = App::Smolder::Report->new;
+  $ENV{APP_SMOLDER_REPORT_CONF} = 'tweak.conf';
+  $sr->_load_configs;
+  
+  is($sr->smolder_server, 'smolder.example.com');
+  is($sr->project_id,     45);
+  is($sr->username,       'superme');
+  is($sr->password,       'omfg');
 }
