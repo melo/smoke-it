@@ -75,6 +75,23 @@ cmp_deeply($LWP::UserAgent::last_post, [
   ],
 ]);
 
+lives_ok sub { $url = $sr->report('Makefile.PL', 'MANIFEST') };
+is($url, 'https://secure/redirected/to/me');
+cmp_deeply($LWP::UserAgent::last_post, [
+  'https://secure/app/developer_projects/process_add_report/1',
+  'Content-Type' => 'form-data',
+  'Content'      => [
+    username => 'user1',
+    password => 'pass1',
+    tags     => '',
+    report_file => ['MANIFEST'],
+  ],
+]);
+
+throws_ok sub {
+  $url = $sr->report('Makefile.PL', 'MANIFEST', 'NoSuchFile')
+}, qr/FATAL: Could not read report file 'NoSuchFile'/;
+
 my $tmp = File::Temp->new( CLEANUP => 1);
 $sr->_merge_cfg_hash({ delete => 1 });
 lives_ok sub { $url = $sr->report($tmp->filename) };
