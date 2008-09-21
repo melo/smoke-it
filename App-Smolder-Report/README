@@ -1,32 +1,45 @@
 App-Smolder-Report
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+The App::Smolder::Report distribution provides a command line tool,
+smolder_report, that allows you to submit smoke reports to a Smolder
+server.
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+First you need to generate your smoke report. The easiest way to do it is:
+
+    prove -l -a smoke.tgz
+
+Then you need to submit your smoke.tgz report to Smolder:
+
+    smolder_report --server=hostname --project-id=1 --username=me \
+                   --password=secret smoke.tgz
+
+That's it!
+
+You can also have a .smolder.conf with all the important parameters.
+
+If you want to tweak this module, the repository is available at:
+
+    http://github.com/melo/perl-app-smolder-report
+
+Fork away!
 
 
 INSTALLATION
 
 To install this module, run the following commands:
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+	perl Makefile.PL
+	make
+	make test
+	sudo make install
+
 
 SUPPORT AND DOCUMENTATION
 
-After installing, you can find documentation for this module with the
+After installing, you can find documentation for this command with the
 perldoc command.
 
-    perldoc App::Smolder::Report
+    perldoc smoke_report
 
 You can also look for information at:
 
