@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use LWP::UserAgent;
 use Getopt::Long;
+use Carp::Clan qw(App::Smolder::Report);
 
 our $VERSION = '0.01';
 
@@ -145,11 +146,8 @@ sub fatal {
     $mesg .= "  $line\n";
   }
   
-  if ($self->run_as_api) {
-    $self->{err_msg} = $mesg;
-    return 0;
-  }
-  
+  croak($mesg) if $self->run_as_api;
+
   print $mesg;
   exit(1);
 }
