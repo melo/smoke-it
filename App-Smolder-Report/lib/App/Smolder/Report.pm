@@ -11,20 +11,27 @@ our $VERSION = '0.01';
 ###################
 # Smolder reporting
 
-sub run {
+sub report {
+  my ($self) = @_;
+  
+  $self->{run_as_api} = 1;
+  return $self->_do_report();
+}
+
+sub _do_report {
   my ($self) = @_;
   
   $self->_load_configs;
   
-  $self->fatal("Required 'smolder_server' setting is empty or missing")
+  return $self->fatal("Required 'smolder_server' setting is empty or missing")
     unless $self->smolder_server;
-  $self->fatal("Required 'project_id' setting is empty or missing")
+  return $self->fatal("Required 'project_id' setting is empty or missing")
     unless $self->project_id;
-  $self->fatal("Required 'username' setting is empty or missing")
+  return $self->fatal("Required 'username' setting is empty or missing")
     unless $self->username;
-  $self->fatal("Required 'password' setting is empty or missing")
+  return $self->fatal("Required 'password' setting is empty or missing")
     unless $self->password;
-  $self->fatal("You must provide at least one report to upload")
+  return $self->fatal("You must provide at least one report to upload")
     unless @ARGV;
   
   return $self->_upload_reports(@ARGV);
@@ -43,7 +50,7 @@ sub _upload_reports {
   
   REPORT_FILE:
   foreach my $report_file (@reports) {
-    $self->fatal("Could not read report file '$report_file'")
+    return $self->fatal("Could not read report file '$report_file'")
       unless -r $report_file;
   
     if ($self->dry_run) {
@@ -72,14 +79,16 @@ sub _upload_reports {
       print "Report '$report_file' sent successfully\n";
     }
     else {
-      $self->fatal(
+      return $self->fatal(
         "Could not upload report '$report_file'",
         "HTTP Code: ".$response->code,
         $response->message,
       );
     }
   }
+  
   print "\nSee all reports at $reports_url\n" if $reports_url;
+  return 1;
 }
 
 
@@ -117,6 +126,13 @@ sub process_args {
   return;
 }
 
+sub run {
+  my ($self) = @_;
+  
+  $self->{run_as_api} = 0;
+  return $self->_do_report;
+}
+
 
 #######
 # Utils
@@ -124,11 +140,17 @@ sub process_args {
 sub fatal {
   my ($self, $mesg, @more) = @_;
   
-  print STDERR "FATAL: $mesg\n";
+  $mesg = "FATAL: $mesg\n";
   foreach my $line (@more) {
-    print STDERR "  $line\n";
+    $mesg .= "  $line\n";
   }
   
+  if ($self->run_as_api) {
+    $self->{err_msg} = $mesg;
+    return 0;
+  }
+  
+  print $mesg;
   exit(1);
 }
 
@@ -153,6 +175,8 @@ sub username       { return $_[0]{username}       }
 sub password       { return $_[0]{password}       }
 sub project_id     { return $_[0]{project_id}     }
 sub smolder_server { return $_[0]{smolder_server} }
+sub run_as_api     { return $_[0]{run_as_api}     }
+sub err_msg        { return $_[0]{err_msg}        }
 
 __END__
 
