@@ -63,4 +63,44 @@ SKIP: {
   is($sr->project_id,     45);
   is($sr->username,       'superme');
   is($sr->password,       'omfg');
+  
+  $sr = App::Smolder::Report->new({
+    load_config => 1,
+    username    => 'keep_me',
+  });
+  is($sr->smolder_server, 'smolder.example.com');
+  is($sr->project_id,     45);
+  is($sr->username,       'keep_me');
+  is($sr->password,       'omfg');
+  
+  $ENV{APP_SMOLDER_REPORT_CONF} = 'empty.conf';
+  $sr = App::Smolder::Report->new;
+  local @ARGV = (
+    "--username=userc",
+    "--password=passc",
+    "--smolder-server=serverc",
+    "--project-id=25",
+    "--dry-run",
+    "--delete",
+  );
+  $sr->process_args;
+  is($sr->smolder_server, 'serverc');
+  is($sr->project_id,     25);
+  is($sr->username,       'userc');
+  is($sr->password,       'passc');
+  ok($sr->delete);
+  ok($sr->dry_run);
+  
+  $sr = App::Smolder::Report->new;
+  local @ARGV = (
+    '--delete',
+    '--password=pass',
+  );
+  $sr->process_args;
+  is($sr->smolder_server, 'empty');
+  is($sr->project_id,     0);
+  is($sr->username,       'empty');
+  is($sr->password,       'pass');
+  ok($sr->delete);
+  ok(!$sr->dry_run);  
 }

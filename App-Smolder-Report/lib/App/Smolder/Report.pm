@@ -183,25 +183,25 @@ sub _merge_cfg_hash {
 sub process_args {
   my ($self) = @_;
   
-  my ($username, $password, $smolder_server, $project_id, $dry_run, $delete);
+  my ($username, $password, $server, $project_id, $dry_run, $delete);
   my $ok = GetOptions(
     "username=s"       => \$username,
     "password=s"       => \$password,
-    "smolder-server=s" => \$smolder_server,
+    "smolder-server=s" => \$server,
     "project-id=i"     => \$project_id,
     "dry-run|n"        => \$dry_run,
     "delete"           => \$delete,
   );
   exit(2) unless $ok;
   
-  $self->{username} = $username;
-  $self->{password} = $password;
-  $self->{smolder_server} = $smolder_server;
-  $self->{project_id} = $project_id;
-  $self->{dry_run} = $dry_run;
-  $self->{delete} = $delete;
-  
   $self->_load_configs;
+  
+  $self->{username} = $username     if defined $username;
+  $self->{password} = $password     if defined $password;
+  $self->{smolder_server} = $server if defined $server;
+  $self->{project_id} = $project_id if defined $project_id;
+  $self->{dry_run} = $dry_run       if defined $project_id;
+  $self->{delete} = $delete         if defined $delete;
   
   return;
 }
