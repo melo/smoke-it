@@ -7,7 +7,7 @@ use strict;
 use App::Smolder::Report;
 
 my $app = App::Smolder::Report->new;
-$app->process_args(@ARGV);
-exit( $app->run ? 0 : 1 );
+$app->process_args();
+exit( $app->run(@ARGV) ? 0 : 1 );
 
 __END__

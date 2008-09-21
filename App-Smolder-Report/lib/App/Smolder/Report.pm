@@ -13,14 +13,14 @@ our $VERSION = '0.01';
 # Smolder reporting
 
 sub report {
-  my ($self) = @_;
+  my $self = shift;
   
   $self->{run_as_api} = 1;
-  return $self->_do_report();
+  return $self->_do_report(@_);
 }
 
 sub _do_report {
-  my ($self) = @_;
+  my $self = shift;
   
   $self->_load_configs;
   
@@ -33,9 +33,9 @@ sub _do_report {
   return $self->fatal("Required 'password' setting is empty or missing")
     unless $self->password;
   return $self->fatal("You must provide at least one report to upload")
-    unless @ARGV;
+    unless @_;
   
-  return $self->_upload_reports(@ARGV);
+  return $self->_upload_reports(@_);
 }
 
 sub _upload_reports {
@@ -128,10 +128,10 @@ sub process_args {
 }
 
 sub run {
-  my ($self) = @_;
+  my $self = shift;
   
   $self->{run_as_api} = 0;
-  return $self->_do_report;
+  return $self->_do_report(@_);
 }
 
 
