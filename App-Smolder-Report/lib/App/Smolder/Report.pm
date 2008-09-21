@@ -189,7 +189,7 @@ sub process_args {
     "password=s"       => \$password,
     "smolder-server=s" => \$smolder_server,
     "project-id=i"     => \$project_id,
-    "dry-run|n"          => \$dry_run,
+    "dry-run|n"        => \$dry_run,
     "delete"           => \$delete,
   );
   exit(2) unless $ok;
