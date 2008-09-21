@@ -2,6 +2,7 @@ package App::Smolder::Report;
 
 use warnings;
 use strict;
+use 5.008;
 use LWP::UserAgent;
 use Getopt::Long;
 use Carp::Clan qw(App::Smolder::Report);
