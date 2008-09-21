@@ -97,6 +97,21 @@ $sr->_merge_cfg_hash({ delete => 1 });
 lives_ok sub { $url = $sr->report($tmp->filename) };
 ok(! -e $tmp->filename);
 
+$tmp = File::Temp->new( CLEANUP => 1);
+$sr->_merge_cfg_hash({ delete => 1 });
+lives_ok sub { $url = $sr->run($tmp->filename) };
+cmp_deeply($LWP::UserAgent::last_post, [
+  'https://secure/app/developer_projects/process_add_report/1',
+  'Content-Type' => 'form-data',
+  'Content'      => [
+    username => 'user1',
+    password => 'pass1',
+    tags     => '',
+    report_file => [$tmp->filename],
+  ],
+]);
+ok(! -e $tmp->filename);
+
 
 $LWP::UserAgent::error = [401, 'bad password'];
 $url = undef;
