@@ -22,8 +22,8 @@ sub report {
 sub _do_report {
   my $self = shift;
   
-  $self->_fatal("Required 'smolder_server' setting is empty or missing")
-    unless $self->smolder_server;
+  $self->_fatal("Required 'server' setting is empty or missing")
+    unless $self->server;
   $self->_fatal("Required 'project_id' setting is empty or missing")
     unless $self->project_id;
   $self->_fatal("Required 'username' setting is empty or missing")
@@ -38,7 +38,7 @@ sub _do_report {
 
 sub _upload_reports {
   my ($self, @reports) = @_;
-  my $server = $self->smolder_server;
+  my $server = $self->server;
   my $reports_url;
   
   $server = "http://$server"
@@ -164,7 +164,7 @@ sub _merge_cfg_hash {
   my ($self, $cfg) = @_;
   
   my @valid_settings = qw{
-    smolder_server project_id
+    server project_id
     username password
     delete
   };
@@ -185,12 +185,12 @@ sub process_args {
   
   my ($username, $password, $server, $project_id, $dry_run, $delete);
   my $ok = GetOptions(
-    "username=s"       => \$username,
-    "password=s"       => \$password,
-    "smolder-server=s" => \$server,
-    "project-id=i"     => \$project_id,
-    "dry-run|n"        => \$dry_run,
-    "delete"           => \$delete,
+    "username=s"   => \$username,
+    "password=s"   => \$password,
+    "server=s"     => \$server,
+    "project-id=i" => \$project_id,
+    "dry-run|n"    => \$dry_run,
+    "delete"       => \$delete,
   );
   exit(2) unless $ok;
   
@@ -198,7 +198,7 @@ sub process_args {
   
   $self->{username} = $username     if defined $username;
   $self->{password} = $password     if defined $password;
-  $self->{smolder_server} = $server if defined $server;
+  $self->{server} = $server         if defined $server;
   $self->{project_id} = $project_id if defined $project_id;
   $self->{dry_run} = $dry_run       if defined $project_id;
   $self->{delete} = $delete         if defined $delete;
@@ -262,13 +262,13 @@ sub new {
   return $self;
 }
 
-sub dry_run        { return $_[0]{dry_run}        }
-sub username       { return $_[0]{username}       }
-sub password       { return $_[0]{password}       }
-sub delete         { return $_[0]{delete}         }
-sub project_id     { return $_[0]{project_id}     }
-sub smolder_server { return $_[0]{smolder_server} }
-sub run_as_api     { return $_[0]{run_as_api}     }
+sub dry_run    { return $_[0]{dry_run}    }
+sub username   { return $_[0]{username}   }
+sub password   { return $_[0]{password}   }
+sub delete     { return $_[0]{delete}     }
+sub project_id { return $_[0]{project_id} }
+sub server     { return $_[0]{server}     }
+sub run_as_api { return $_[0]{run_as_api} }
 
 __END__
 

@@ -12,17 +12,17 @@ ok(!defined($sr->dry_run));
 ok(!defined($sr->username));
 ok(!defined($sr->password));
 ok(!defined($sr->project_id));
-ok(!defined($sr->smolder_server));
+ok(!defined($sr->server));
 ok(!defined($sr->run_as_api));
 
 my @incr_tests = (
   {
     add_to_cfg => {},
-    re => qr/Required 'smolder_server' setting is empty or missing/,
+    re => qr/Required 'server' setting is empty or missing/,
   },
   
   {
-    add_to_cfg => { smolder_server => 'server.example.com' },
+    add_to_cfg => { server => 'server.example.com' },
     re => qr/Required 'project_id' setting is empty or missing/,
   },
 
@@ -61,7 +61,7 @@ cmp_deeply($LWP::UserAgent::last_post, [
   ],
 ]);
 
-$sr->_merge_cfg_hash({ smolder_server => 'https://secure' });
+$sr->_merge_cfg_hash({ server => 'https://secure' });
 lives_ok sub { $url = $sr->report('Makefile.PL') };
 is($url, 'https://secure/redirected/to/me');
 cmp_deeply($LWP::UserAgent::last_post, [

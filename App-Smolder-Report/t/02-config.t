@@ -7,7 +7,7 @@ use Cwd;
 use App::Smolder::Report;
 
 my $sr = App::Smolder::Report->new({ run_as_api => 1 });
-ok(!defined($sr->smolder_server));
+ok(!defined($sr->server));
 ok(!defined($sr->project_id));
 ok(!defined($sr->username));
 ok(!defined($sr->password));
@@ -17,11 +17,11 @@ lives_ok sub {
   $cfg = $sr->_read_cfg_file('t/data/cfg/smolder_1.conf');
 };
 cmp_deeply($cfg, {
-  smolder_server => 'server1',
-  project_id     => 1,
-  username       => 'user1',
-  password       => 'pass1',
-  delete         => 1,
+  server     => 'server1',
+  project_id => 1,
+  username   => 'user1',
+  password   => 'pass1',
+  delete     => 1,
 });
 
 throws_ok sub {
@@ -34,10 +34,10 @@ throws_ok sub {
 
 $sr->_merge_cfg_hash($cfg);
 cmp_deeply($cfg, {});
-is($sr->smolder_server, 'server1');
-is($sr->project_id,     1);
-is($sr->username,       'user1');
-is($sr->password,       'pass1');
+is($sr->server,     'server1');
+is($sr->project_id, 1);
+is($sr->username,   'user1');
+is($sr->password,   'pass1');
 
 SKIP: {
   my $cwd = getcwd();
@@ -49,45 +49,45 @@ SKIP: {
   
   $sr = App::Smolder::Report->new;
   $sr->_load_configs;
-  is($sr->smolder_server, 'smolder.example.com');
-  is($sr->project_id,     45);
-  is($sr->username,       'superme');
-  is($sr->password,       'supersecret');
+  is($sr->server,     'smolder.example.com');
+  is($sr->project_id, 45);
+  is($sr->username,   'superme');
+  is($sr->password,   'supersecret');
   
   
   $sr = App::Smolder::Report->new;
   $ENV{APP_SMOLDER_REPORT_CONF} = 'tweak.conf';
   $sr->_load_configs;
   
-  is($sr->smolder_server, 'smolder.example.com');
-  is($sr->project_id,     45);
-  is($sr->username,       'superme');
-  is($sr->password,       'omfg');
+  is($sr->server,     'smolder.example.com');
+  is($sr->project_id, 45);
+  is($sr->username,   'superme');
+  is($sr->password,   'omfg');
   
   $sr = App::Smolder::Report->new({
     load_config => 1,
     username    => 'keep_me',
   });
-  is($sr->smolder_server, 'smolder.example.com');
-  is($sr->project_id,     45);
-  is($sr->username,       'keep_me');
-  is($sr->password,       'omfg');
+  is($sr->server,     'smolder.example.com');
+  is($sr->project_id, 45);
+  is($sr->username,   'keep_me');
+  is($sr->password,   'omfg');
   
   $ENV{APP_SMOLDER_REPORT_CONF} = 'empty.conf';
   $sr = App::Smolder::Report->new;
   local @ARGV = (
     "--username=userc",
     "--password=passc",
-    "--smolder-server=serverc",
+    "--server=serverc",
     "--project-id=25",
     "--dry-run",
     "--delete",
   );
   $sr->process_args;
-  is($sr->smolder_server, 'serverc');
-  is($sr->project_id,     25);
-  is($sr->username,       'userc');
-  is($sr->password,       'passc');
+  is($sr->server,     'serverc');
+  is($sr->project_id, 25);
+  is($sr->username,   'userc');
+  is($sr->password,   'passc');
   ok($sr->delete);
   ok($sr->dry_run);
   
@@ -97,10 +97,10 @@ SKIP: {
     '--password=pass',
   );
   $sr->process_args;
-  is($sr->smolder_server, 'empty');
-  is($sr->project_id,     0);
-  is($sr->username,       'empty');
-  is($sr->password,       'pass');
+  is($sr->server,     'empty');
+  is($sr->project_id, 0);
+  is($sr->username,   'empty');
+  is($sr->password,   'pass');
   ok($sr->delete);
   ok(!$sr->dry_run);  
 }
