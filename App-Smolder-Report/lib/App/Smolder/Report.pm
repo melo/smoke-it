@@ -41,7 +41,10 @@ sub _upload_reports {
   my ($self, @reports) = @_;
   my $server = $self->smolder_server;
   my $reports_url;
-    
+  
+  $server = "http://$server"
+    unless $server =~ m/^http/;
+  
   my $ua = LWP::UserAgent->new;
   my $url
     = $server
@@ -113,9 +116,6 @@ sub process_args {
     "dry-run|n"          => \$dry_run,
   );
   exit(2) unless $ok;
-  
-  $smolder_server = "http://$smolder_server"
-    unless $smolder_server =~ m/^http/;
   
   $self->{username} = $username;
   $self->{password} = $password;
