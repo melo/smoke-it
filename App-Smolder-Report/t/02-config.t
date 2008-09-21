@@ -6,7 +6,7 @@ use Test::Most 'no_plan';
 use Cwd;
 use App::Smolder::Report;
 
-my $sr = App::Smolder::Report->new;
+my $sr = App::Smolder::Report->new({ run_as_api => 1 });
 ok(!defined($sr->smolder_server));
 ok(!defined($sr->project_id));
 ok(!defined($sr->username));
@@ -22,6 +22,14 @@ cmp_deeply($cfg, {
   username       => 'user1',
   password       => 'pass1',
 });
+
+throws_ok sub {
+  $sr->_read_cfg_file('t/data/cfg/bad_smolder_1.conf')
+}, qr/Could not parse line \d+ of /;
+
+throws_ok sub {
+  $sr->_merge_cfg_file('t/data/cfg/bad_smolder_2.conf')
+}, qr/Invalid configuration keys in .+pass/s;
 
 $sr->_merge_cfg_hash($cfg);
 cmp_deeply($cfg, {});
