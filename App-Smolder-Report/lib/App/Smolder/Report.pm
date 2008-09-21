@@ -6,7 +6,7 @@ use LWP::UserAgent;
 use Getopt::Long;
 use Carp::Clan qw(App::Smolder::Report);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 ###################
@@ -280,7 +280,7 @@ App::Smolder::Report - Report test runs to a smoke server
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
