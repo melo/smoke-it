@@ -22,8 +22,6 @@ sub report {
 sub _do_report {
   my $self = shift;
   
-  $self->_load_configs;
-  
   return $self->fatal("Required 'smolder_server' setting is empty or missing")
     unless $self->smolder_server;
   return $self->fatal("Required 'project_id' setting is empty or missing")
@@ -99,7 +97,67 @@ sub _upload_reports {
 ###################################
 # Configuration loading and merging
 
-sub _load_configs {}
+sub _load_configs {
+  my ($self) = @_;
+  
+  my $filename = '.smolder.conf';
+  my @files_to_check = ($filename);
+  unshift @files_to_check, "$ENV{HOME}/$filename" if $ENV{HOME};
+  push @files_to_check, $ENV{APP_SMOLDER_REPORT_CONF}
+    if $ENV{APP_SMOLDER_REPORT_CONF};
+  
+  foreach my $file (@files_to_check) {
+    $self->_merge_cfg_file($file);
+  }
+  
+  return;
+}
+
+sub _merge_cfg_file {
+  my ($self, $file) = @_;
+  
+  my $cfg = $self->_read_cfg_file($file);
+  return unless $cfg;
+  
+  $self->_merge_cfg_hash($cfg);
+  return;
+}
+
+sub _read_cfg_file {
+  my ($self, $file) = @_;
+  my %cfg;
+  local $_;
+  
+  open(my $fh, '<', $file) || return;
+  while (<$fh>) {
+    s/^\s+|\s+$//g;
+    next if /^(#.*)?$/;
+    
+    if (/^(\S+)\s*=\s*(["'])(.*)\2$/) {
+      $cfg{$1} = $3;
+    }
+    elsif (/^(\S+)\s*=\s*(.+)$/) {
+      $cfg{$1} = $2;
+    }
+    else {
+      $self->fatal("Could not parse line $. of $file: $_");
+    }
+  }
+  close($fh);
+  
+  return \%cfg;
+}
+
+sub _merge_cfg_hash {
+  my ($self, $cfg) = @_;
+  
+  foreach my $cfg_key (qw/ smolder_server project_id username password /) {
+    next unless exists $cfg->{$cfg_key};
+    $self->{$cfg_key} = $cfg->{$cfg_key};
+  }
+  
+  return;
+}
 
 
 ##################################
@@ -123,6 +181,8 @@ sub process_args {
   $self->{smolder_server} = $smolder_server;
   $self->{project_id} = $project_id;
   $self->{dry_run} = $dry_run;
+  
+  $self->_load_configs;
   
   return;
 }
@@ -159,15 +219,21 @@ sub fatal {
 
 sub new {
   my $class = shift;
+  my $self = bless {}, $class;
 
   my %args;
   if (ref($_[0])) { %args = %{$_[0]} }
   else            { %args = @_       }
+
+  $self->_load_configs if delete $args{load_config};  
   
-  return bless \%args, $class;
+  while (my ($k, $v) = each %args) {
+    $self->{$k} = $v;
+  }
+  
+  return $self;
 }
 
-sub cfg            { return $_[0]{cfg}            }
 sub dry_run        { return $_[0]{dry_run}        }
 sub username       { return $_[0]{username}       }
 sub password       { return $_[0]{password}       }
