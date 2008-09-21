@@ -56,7 +56,7 @@ sub _upload_reports {
       unless -r $report_file;
   
     if ($self->dry_run) {
-      print "Dry run: would POST to $url: $report_file\n";
+      $self->log("Dry run: would POST to $url: $report_file");
       next REPORT_FILE;
     }
     
@@ -78,7 +78,7 @@ sub _upload_reports {
           unless $reports_url =~ m/^http/;
       }
       
-      print "Report '$report_file' sent successfully\n";
+      $self->log("Report '$report_file' sent successfully");
     }
     else {
       return $self->fatal(
@@ -89,8 +89,8 @@ sub _upload_reports {
     }
   }
   
-  print "\nSee all reports at $reports_url\n" if $reports_url;
-  return 1;
+  $self->log("See all reports at $reports_url") if $reports_url;
+  return $reports_url;
 }
 
 
@@ -216,6 +216,15 @@ sub fatal {
 
   print $mesg;
   exit(1);
+}
+
+sub log {
+  my ($self, $mesg) = @_;
+  return if $self->run_as_api;
+
+  print "$mesg\n";
+
+  return;
 }
 
 
