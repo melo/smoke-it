@@ -22,15 +22,15 @@ sub report {
 sub _do_report {
   my $self = shift;
   
-  return $self->fatal("Required 'smolder_server' setting is empty or missing")
+  $self->_fatal("Required 'smolder_server' setting is empty or missing")
     unless $self->smolder_server;
-  return $self->fatal("Required 'project_id' setting is empty or missing")
+  $self->_fatal("Required 'project_id' setting is empty or missing")
     unless $self->project_id;
-  return $self->fatal("Required 'username' setting is empty or missing")
+  $self->_fatal("Required 'username' setting is empty or missing")
     unless $self->username;
-  return $self->fatal("Required 'password' setting is empty or missing")
+  $self->_fatal("Required 'password' setting is empty or missing")
     unless $self->password;
-  return $self->fatal("You must provide at least one report to upload")
+  $self->_fatal("You must provide at least one report to upload")
     unless @_;
   
   return $self->_upload_reports(@_);
@@ -52,11 +52,11 @@ sub _upload_reports {
   
   REPORT_FILE:
   foreach my $report_file (@reports) {
-    return $self->fatal("Could not read report file '$report_file'")
+    $self->_fatal("Could not read report file '$report_file'")
       unless -r $report_file;
   
     if ($self->dry_run) {
-      $self->log("Dry run: would POST to $url: $report_file");
+      $self->_log("Dry run: would POST to $url: $report_file");
       next REPORT_FILE;
     }
     
@@ -78,10 +78,10 @@ sub _upload_reports {
           unless $reports_url =~ m/^http/;
       }
       
-      $self->log("Report '$report_file' sent successfully");
+      $self->_log("Report '$report_file' sent successfully");
     }
     else {
-      return $self->fatal(
+      $self->_fatal(
         "Could not upload report '$report_file'",
         "HTTP Code: ".$response->code,
         $response->message,
@@ -89,7 +89,7 @@ sub _upload_reports {
     }
   }
   
-  $self->log("See all reports at $reports_url") if $reports_url;
+  $self->_log("See all reports at $reports_url") if $reports_url;
   return $reports_url;
 }
 
@@ -146,7 +146,7 @@ sub _read_cfg_file {
       $cfg{$1} = $2;
     }
     else {
-      $self->fatal("Could not parse line $. of $file: $_");
+      $self->_fatal("Could not parse line $. of $file: $_");
     }
   }
   close($fh);
@@ -204,7 +204,7 @@ sub run {
 #######
 # Utils
 
-sub fatal {
+sub _fatal {
   my ($self, $mesg, @more) = @_;
   
   $mesg = "FATAL: $mesg\n";
@@ -218,7 +218,7 @@ sub fatal {
   exit(1);
 }
 
-sub log {
+sub _log {
   my ($self, $mesg) = @_;
   return if $self->run_as_api;
 
