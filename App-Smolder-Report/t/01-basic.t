@@ -3,11 +3,7 @@
 use strict;
 use warnings;
 use Test::Most qw( no_plan );
-
-BEGIN {
-  $INC{'LWP/UserAgent.pm'} = '1'; # We provide our own
-  use App::Smolder::Report;
-}
+use App::Smolder::Report;
 
 my $sr = App::Smolder::Report->new;
 ok($sr);
@@ -17,7 +13,6 @@ ok(!defined($sr->password));
 ok(!defined($sr->project_id));
 ok(!defined($sr->smolder_server));
 ok(!defined($sr->run_as_api));
-ok(!defined($sr->err_msg));
 
 my @incr_tests = (
   {
@@ -51,8 +46,9 @@ foreach my $t (@incr_tests) {
   throws_ok sub { $sr->report }, $t->{re};
 }
 
-lives_ok sub { $sr->report('Makefile.PL') };
-
+my $url;
+lives_ok sub { $url = $sr->report('Makefile.PL') };
+is($url, 'http://server.example.com/redirected/to/me');
 cmp_deeply($LWP::UserAgent::last_post, [
   'http://server.example.com/app/developer_projects/process_add_report/1',
   'Content-Type' => 'form-data',
@@ -64,22 +60,57 @@ cmp_deeply($LWP::UserAgent::last_post, [
   ],
 ]);
 
+$sr->_merge_cfg_hash({ smolder_server => 'https://secure' });
+lives_ok sub { $url = $sr->report('Makefile.PL') };
+is($url, 'https://secure/redirected/to/me');
+cmp_deeply($LWP::UserAgent::last_post, [
+  'https://secure/app/developer_projects/process_add_report/1',
+  'Content-Type' => 'form-data',
+  'Content'      => [
+    username => 'user1',
+    password => 'pass1',
+    tags     => '',
+    report_file => ['Makefile.PL'],
+  ],
+]);
+
+$LWP::UserAgent::error = [401, 'bad password'];
+$url = undef;
+throws_ok sub {
+  $url = $sr->report('Makefile.PL')
+}, qr/HTTP Code: 401.+bad password/s;
+ok(!defined($url), 'no redirect');
+
+
+$LWP::UserAgent::last_post = undef;
+$sr->{dry_run} = 1;
+lives_ok sub { $url = $sr->report('Makefile.PL') };
+ok(!defined($url));
+ok(!defined($LWP::UserAgent::last_post), 'Dry run does not post');
+
 
 package LWP::UserAgent;
 
 use strict;
+no warnings;
 
 our $last_post;
+our $error;
 
 sub new { return bless {}, $_[0] }
 
 sub post {
   my $self = shift;
   $last_post = [@_];
+
+  my ($rc, $msg) = (302, 'Okydoky');
+  if ($error) {
+    ($rc, $msg) = @$error;
+    $error = undef;
+  }
   
   return HTTP::Response->new(
-    '302',
-    'Okidoky',
+    $rc, $msg,
     [ Location => '/redirected/to/me' ],
   );
 }
