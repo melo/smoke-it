@@ -255,7 +255,6 @@ sub password       { return $_[0]{password}       }
 sub project_id     { return $_[0]{project_id}     }
 sub smolder_server { return $_[0]{smolder_server} }
 sub run_as_api     { return $_[0]{run_as_api}     }
-sub err_msg        { return $_[0]{err_msg}        }
 
 __END__
 
