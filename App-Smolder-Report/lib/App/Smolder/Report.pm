@@ -139,8 +139,12 @@ sub fatal {
 
 sub new {
   my $class = shift;
+
+  my %args;
+  if (ref($_[0])) { %args = %{$_[0]} }
+  else            { %args = @_       }
   
-  return bless {}, $class;
+  return bless \%args, $class;
 }
 
 sub cfg            { return $_[0]{cfg}            }
