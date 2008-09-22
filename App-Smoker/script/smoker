@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use App::Smoker;
+
+my $app = App::Smoker->new;
+$app->process_args();
+exit( $app->run(@ARGV) ? 0 : 1 );
+
+__END__
