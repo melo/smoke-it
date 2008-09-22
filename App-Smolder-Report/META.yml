@@ -26,4 +26,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/melo/perl-app-smolder-report
-version: 0.02
+version: 0.03

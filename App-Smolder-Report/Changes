@@ -1,5 +1,17 @@
 Revision history for App-Smolder-Report
 
+0.03    2008/09/22
+
+        - Skip POD coverage for now, we haven't written it yet (Pedro Melo)
+			  - Stop using Test::Most and use the Test modules (::Deep and ::Exception) (Pedro Melo)
+
+
+0.02    2008/09/21
+
+        - First CPAN Release
+
+
 0.01    2008/09/21
-        First version.
+
+        - First version.
 
