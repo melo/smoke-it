@@ -201,7 +201,7 @@ sub process_args {
   $self->{password} = $password     if defined $password;
   $self->{server} = $server         if defined $server;
   $self->{project_id} = $project_id if defined $project_id;
-  $self->{dry_run} = $dry_run       if defined $project_id;
+  $self->{dry_run} = $dry_run       if defined $dry_run;
   $self->{delete} = $delete         if defined $delete;
   
   return;
