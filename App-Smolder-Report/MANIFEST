@@ -3,7 +3,7 @@ Changes
 MANIFEST
 README
 lib/App/Smolder/Report.pm
-scripts/smolder_report
+script/smolder_report
 t/00-load.t
 t/pod-coverage.t
 t/pod.t

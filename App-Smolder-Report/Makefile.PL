@@ -4,6 +4,9 @@ use inc::Module::Install;
 name     'App-Smolder-Report';
 all_from 'lib/App/Smolder/Report.pm';
 
+# Make sure script is installed
+install_script "smolder_report";
+
 # Specific dependencies
 requires 'LWP::UserAgent'  => 0;
 requires 'Getopt::Long'    => 0;
