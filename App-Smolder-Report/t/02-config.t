@@ -91,11 +91,13 @@ SKIP: {
   is($sr->password,   'passc');
   ok($sr->delete);
   ok(!$sr->dry_run);
+  ok(!$sr->quiet);
   
   $sr = App::Smolder::Report->new;
   local @ARGV = (
     '--delete',
     '--password=pass',
+    '--quiet',
     '--dry-run'
   );
   $sr->process_args;
@@ -105,4 +107,5 @@ SKIP: {
   is($sr->password,   'pass');
   ok($sr->delete);
   ok($sr->dry_run);
+  ok($sr->quiet);
 }
