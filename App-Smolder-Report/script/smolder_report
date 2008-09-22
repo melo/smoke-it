@@ -39,7 +39,10 @@ Version 0.04
     server = "smolder.simplicidade.org"
     username = "melo"
     password = "secret"
+    # remove report files after successful upload
     delete = 1
+    # shhs... say nothing on success
+    quiet = 1
     
     # Per project .smolder.conf
     $ cat .smolder.conf
