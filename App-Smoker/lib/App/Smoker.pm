@@ -1,9 +1,85 @@
 package App::Smoker;
 
-use strict;
 use warnings;
+use strict;
+use 5.008;
+use Getopt::Long;
 
 our $VERSION = '0.01';
+
+
+###################
+# Smolder reporting
+
+sub run {
+  my $self = shift;
+
+  # run smoker  
+}
+
+
+##################################
+# Deal with command line arguments
+
+sub process_args {
+  my ($self) = @_;
+  
+  my ($quiet);
+  my $ok = GetOptions(
+    "quiet"        => \$quiet,
+  );
+  exit(2) unless $ok;
+  
+  $self->{quiet} = $quiet;
+  
+  return;
+}
+
+#######
+# Utils
+
+sub _fatal {
+  my ($self, $mesg, @more) = @_;
+  
+  $mesg = "FATAL: $mesg\n";
+  foreach my $line (@more) {
+    $mesg .= "  $line\n";
+  }
+  
+  print $mesg;
+  exit(1);
+}
+
+sub _log {
+  my ($self, $mesg) = @_;
+  return if $self->quiet;
+
+  print "$mesg\n";
+
+  return;
+}
+
+
+###########################
+# Constructor and accessors
+#   boring stuff
+
+sub new {
+  my $class = shift;
+  my $self = bless {}, $class;
+
+  my %args;
+  if (ref($_[0])) { %args = %{$_[0]} }
+  else            { %args = @_       }
+
+  while (my ($k, $v) = each %args) {
+    $self->{$k} = $v;
+  }
+  
+  return $self;
+}
+
+sub quiet { return $_[0]{quiet} }
 
 
 __END__
