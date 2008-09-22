@@ -19,7 +19,9 @@ requires:
   File::Temp: 0
   Getopt::Long: 0
   LWP::UserAgent: 0
-  Test::Most: 0
+  Test::Deep: 0
+  Test::Exception: 0
+  Test::More: 0
   perl: 5.8.0
 resources:
   license: http://dev.perl.org/licenses/

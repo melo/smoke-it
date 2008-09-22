@@ -2,7 +2,9 @@
 
 use strict;
 use warnings;
-use Test::Most qw( no_plan );
+use Test::More qw( no_plan );
+use Test::Exception;
+use Test::Deep;
 use App::Smolder::Report;
 use File::Temp;
 

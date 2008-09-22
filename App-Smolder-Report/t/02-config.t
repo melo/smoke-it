@@ -2,7 +2,9 @@
 
 use strict;
 use warnings;
-use Test::Most 'no_plan';
+use Test::More 'no_plan';
+use Test::Exception;
+use Test::Deep;
 use Cwd;
 use App::Smolder::Report;
 
