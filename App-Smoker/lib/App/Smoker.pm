@@ -13,23 +13,23 @@ our $VERSION = '0.01';
 # Smolder reporting
 
 sub run {
-  my ($self, $base_dir) = @_;
+  my ($self, $filter) = @_;
   
-  if (!$base_dir) {
-    $base_dir = (getpwuid($EUID))[7];
-    $self->_fatal("You do not exist: user $EUID not found")
-      unless $base_dir;
-    $base_dir .= '/repositories';
-  }
+  my $base_dir = (getpwuid($EUID))[7];
+  $self->_fatal("You do not exist: user $EUID not found")
+    unless $base_dir;
+  $base_dir .= '/repositories';
   
-  return $self->_smoke_all_repositories_in($base_dir);
+  return $self->_smoke_all_repositories_in($base_dir, $filter);
 }
 
 sub _smoke_all_repositories_in {
-  my ($self, $d) = @_;
+  my ($self, $d, $filter) = @_;
   
   _foreach_directory($d, sub {
-    my ($p) = @_;
+    my ($p, $e) = @_;
+    
+    return if $filter && $e !~ m/$filter/;
     
     $self->_smoke_repository($p);
   });
