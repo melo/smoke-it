@@ -38,6 +38,8 @@ sub _smoke_all_repositories_in {
 sub _smoke_repository {
   my ($self, $d) = @_;
 
+  return unless $self->update_scm($d);
+  
   return if $self->_smoke_dir($d);
    
   _foreach_directory($d, sub {
