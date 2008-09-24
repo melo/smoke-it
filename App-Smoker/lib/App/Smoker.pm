@@ -60,11 +60,23 @@ sub _smoke_dir {
 sub _run_smoker {
   my ($self, $d) = @_;
   
+  chdir($d) || $self->_fatal("Could not chdir() to '$d': $!");
+  
+  system('/bin/sh', "./.smoke");
+  
   return 1;
 }
 
 sub _run_prove_and_report_it {
   my ($self, $d) = @_;
+  
+  chdir($d) || $self->_fatal("Could not chdir() to '$d': $!");
+  
+  system('prove', '-l', '-a', 'smoker_report.tgz');
+  if (-e 'smoker_report.tgz') {
+    system('smolder_report', 'smoker_report.tgz');
+    unlink('smoker_report.tgz');
+  }
   
   return 1;
 }
