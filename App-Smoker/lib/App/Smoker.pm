@@ -2,6 +2,7 @@ package App::Smoker;
 
 use warnings;
 use strict;
+use English qw( -no_match_vars );
 use 5.008;
 use Getopt::Long;
 
@@ -12,10 +13,60 @@ our $VERSION = '0.01';
 # Smolder reporting
 
 sub run {
-  my $self = shift;
-
-  # run smoker  
+  my ($self, $base_dir) = @_;
+  
+  if (!$base_dir) {
+    $base_dir = (getpwuid($EUID))[7];
+    $self->_fatal("You do not exist: user $EUID not found")
+      unless $base_dir;
+    $base_dir .= '/repositories';
+  }
+  
+  return $self->_smoke_all_repositories_in($base_dir);
 }
+
+sub _smoke_all_repositories_in {
+  my ($self, $d) = @_;
+  
+  _foreach_directory($d, sub {
+    my ($p) = @_;
+    
+    $self->_smoke_repository($p);
+  });
+}
+
+sub _smoke_repository {
+  my ($self, $d) = @_;
+
+  return if $self->_smoke_dir($d);
+   
+  _foreach_directory($d, sub {
+    my ($p) = @_;
+    
+    $self->_smoke_dir($p);
+  });
+}
+
+sub _smoke_dir {
+  my ($self, $d) = @_;
+  
+  return $self->_run_smoker($d) if -e "$d/.smoker";
+  return $self->_run_prove_and_report_it($d) if -d "$d/t";
+  return;
+}
+
+sub _run_smoker {
+  my ($self, $d) = @_;
+  
+  return 1;
+}
+
+sub _run_prove_and_report_it {
+  my ($self, $d) = @_;
+  
+  return 1;
+}
+
 
 
 ##################################
@@ -70,7 +121,7 @@ sub _foreach_directory {
     my $path = "$dir/$entry";
     next unless -d $path;
     
-    $cb->($d);
+    $cb->($path);
   }
   closedir($dirh);
   
