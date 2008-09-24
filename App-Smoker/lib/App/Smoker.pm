@@ -175,7 +175,7 @@ sub _foreach_directory {
     my $path = "$dir/$entry";
     next unless -d $path;
     
-    $cb->($path);
+    $cb->($path, $entry);
   }
   closedir($dirh);
   
