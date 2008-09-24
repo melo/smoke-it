@@ -151,6 +151,11 @@ sub _read_cfg_file {
     if (/^(\S+)\s*=\s*(["'])(.*)\2$/) {
       $cfg{$1} = $3;
     }
+    elsif (my ($k, $cmd) = $_ =~ /^(\S+)\s*=\s*`(.*)`$/) {
+      my $value = `$cmd`;
+      chomp($value);
+      $cfg{$k} = $value;
+    }
     elsif (/^(\S+)\s*=\s*(.+)$/) {
       $cfg{$1} = $2;
     }

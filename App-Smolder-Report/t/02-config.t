@@ -18,6 +18,8 @@ my $cfg;
 lives_ok sub {
   $cfg = $sr->_read_cfg_file('t/data/cfg/smolder_1.conf');
 };
+my $arch = `uname -sr`;
+chomp($arch);
 cmp_deeply($cfg, {
   server       => 'server1',
   project_id   => 1,
@@ -25,7 +27,7 @@ cmp_deeply($cfg, {
   password     => 'pass1',
   delete       => 1,
   platform     => 'i386',
-  architecture => 'Darwin',
+  architecture => $arch,
 });
 
 throws_ok sub {
@@ -43,7 +45,7 @@ is($sr->project_id,   1);
 is($sr->username,     'user1');
 is($sr->password,     'pass1');
 is($sr->platform,     'i386');
-is($sr->architecture, 'Darwin');
+is($sr->architecture,  $arch);
 
 SKIP: {
   my $cwd = getcwd();
