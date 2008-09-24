@@ -68,6 +68,37 @@ sub _run_prove_and_report_it {
 }
 
 
+################
+# SCM operations
+
+sub update_scm {
+  my ($self, $d) = @_;
+  
+  chdir($d) || return;
+
+  my @cmd;  
+  if    (-d '.git') { @cmd = qw(git pull -f) }
+  elsif (-d '.svn') { @cmd = qw(svn update)  }
+
+  $self->_fatal("Directory '$d' uses unknown SCM system") unless @cmd;
+  
+  my $ok = system(@cmd);  
+  return 1 if $ok == 0;
+  
+  my $cmd = join(' ', @cmd);
+  if ($? == -1) {
+    $self->_fatal("Could not exec '$cmd': $!");
+  }
+  elsif (my $signal = $? & 127) {
+    $self->_fatal("Command '$cmd' died with signal $signal");
+  }
+  else {
+    $self->_error("Command '$cmd' exited with value ", $? >> 8);
+  }
+  
+  return 0;
+}
+
 
 ##################################
 # Deal with command line arguments
