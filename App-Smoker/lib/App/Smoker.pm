@@ -62,7 +62,7 @@ sub _run_smoker {
   
   chdir($d) || $self->_fatal("Could not chdir() to '$d': $!");
   
-  system('/bin/sh', "./.smoke");
+  system('/bin/sh', './.smoker');
   
   return 1;
 }
