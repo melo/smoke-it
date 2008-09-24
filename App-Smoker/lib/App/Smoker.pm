@@ -101,6 +101,15 @@ sub _fatal {
   exit(1);
 }
 
+sub _error {
+  my ($self, $mesg) = @_;
+  return if $self->quiet;
+
+  print "ERROR: $mesg\n";
+
+  return;
+}
+
 sub _log {
   my ($self, $mesg) = @_;
   return if $self->quiet;
