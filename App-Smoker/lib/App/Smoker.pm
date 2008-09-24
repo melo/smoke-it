@@ -59,6 +59,24 @@ sub _log {
   return;
 }
 
+sub _foreach_directory {
+  my ($dir, $cb) = @_;
+  
+  opendir(my $dirh, $dir) || return;
+  
+  while (my $entry = readdir($dirh)) {
+    next if $entry =~ m/^[.]/;
+    
+    my $path = "$dir/$entry";
+    next unless -d $path;
+    
+    $cb->($d);
+  }
+  closedir($dirh);
+  
+  return;
+}
+
 
 ###########################
 # Constructor and accessors
