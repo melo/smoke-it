@@ -19,11 +19,13 @@ lives_ok sub {
   $cfg = $sr->_read_cfg_file('t/data/cfg/smolder_1.conf');
 };
 cmp_deeply($cfg, {
-  server     => 'server1',
-  project_id => 1,
-  username   => 'user1',
-  password   => 'pass1',
-  delete     => 1,
+  server       => 'server1',
+  project_id   => 1,
+  username     => 'user1',
+  password     => 'pass1',
+  delete       => 1,
+  platform     => 'i386',
+  architecture => 'Darwin',
 });
 
 throws_ok sub {
@@ -36,10 +38,12 @@ throws_ok sub {
 
 $sr->_merge_cfg_hash($cfg);
 cmp_deeply($cfg, {});
-is($sr->server,     'server1');
-is($sr->project_id, 1);
-is($sr->username,   'user1');
-is($sr->password,   'pass1');
+is($sr->server,       'server1');
+is($sr->project_id,   1);
+is($sr->username,     'user1');
+is($sr->password,     'pass1');
+is($sr->platform,     'i386');
+is($sr->architecture, 'Darwin');
 
 SKIP: {
   my $cwd = getcwd();
@@ -56,7 +60,6 @@ SKIP: {
   is($sr->username,   'superme');
   is($sr->password,   'supersecret');
   
-  
   $sr = App::Smolder::Report->new;
   $ENV{APP_SMOLDER_REPORT_CONF} = 'tweak.conf';
   $sr->_load_configs;
@@ -65,6 +68,7 @@ SKIP: {
   is($sr->project_id, 45);
   is($sr->username,   'superme');
   is($sr->password,   'omfg');
+  is($sr->platform,   'ppc');
   
   $sr = App::Smolder::Report->new({
     load_config => 1,
@@ -74,6 +78,7 @@ SKIP: {
   is($sr->project_id, 45);
   is($sr->username,   'keep_me');
   is($sr->password,   'omfg');
+  is($sr->platform,   'ppc');
   
   $ENV{APP_SMOLDER_REPORT_CONF} = 'empty.conf';
   $sr = App::Smolder::Report->new;
@@ -81,14 +86,17 @@ SKIP: {
     "--username=userc",
     "--password=passc",
     "--server=serverc",
+    "--platform=x86-64",
     "--project-id=25",
     "--delete",
   );
   $sr->process_args;
-  is($sr->server,     'serverc');
-  is($sr->project_id, 25);
-  is($sr->username,   'userc');
-  is($sr->password,   'passc');
+  is($sr->server,       'serverc');
+  is($sr->project_id,   25);
+  is($sr->username,     'userc');
+  is($sr->password,     'passc');
+  is($sr->platform,     'x86-64');
+  ok(!$sr->architecture);
   ok($sr->delete);
   ok(!$sr->dry_run);
   ok(!$sr->quiet);
@@ -98,13 +106,16 @@ SKIP: {
     '--delete',
     '--password=pass',
     '--quiet',
+    '--architecture=Linux',
     '--dry-run'
   );
   $sr->process_args;
-  is($sr->server,     'empty');
-  is($sr->project_id, 0);
-  is($sr->username,   'empty');
-  is($sr->password,   'pass');
+  is($sr->server,       'empty');
+  is($sr->project_id,   0);
+  is($sr->username,     'empty');
+  is($sr->password,     'pass');
+  is($sr->platform,     'ppc');
+  is($sr->architecture, 'Linux');
   ok($sr->delete);
   ok($sr->dry_run);
   ok($sr->quiet);

@@ -56,24 +56,32 @@ cmp_deeply($LWP::UserAgent::last_post, [
   'http://server.example.com/app/developer_projects/process_add_report/1',
   'Content-Type' => 'form-data',
   'Content'      => [
-    username => 'user1',
-    password => 'pass1',
-    tags     => '',
-    report_file => ['Makefile.PL'],
+    username     => 'user1',
+    password     => 'pass1',
+    tags         => '',
+    platform     => undef,
+    architecture => undef,
+    report_file  => ['Makefile.PL'],
   ],
 ]);
 
-$sr->_merge_cfg_hash({ server => 'https://secure' });
+$sr->_merge_cfg_hash({
+  server       => 'https://secure',
+  platform     => 'i386',
+  architecture => 'Darwin 9.4.0',
+});
 lives_ok sub { $url = $sr->report('Makefile.PL') };
 is($url, 'https://secure/redirected/to/me');
 cmp_deeply($LWP::UserAgent::last_post, [
   'https://secure/app/developer_projects/process_add_report/1',
   'Content-Type' => 'form-data',
   'Content'      => [
-    username => 'user1',
-    password => 'pass1',
-    tags     => '',
-    report_file => ['Makefile.PL'],
+    username     => 'user1',
+    password     => 'pass1',
+    tags         => '',
+    platform     => 'i386',
+    architecture => 'Darwin 9.4.0',
+    report_file  => ['Makefile.PL'],
   ],
 ]);
 
@@ -83,10 +91,12 @@ cmp_deeply($LWP::UserAgent::last_post, [
   'https://secure/app/developer_projects/process_add_report/1',
   'Content-Type' => 'form-data',
   'Content'      => [
-    username => 'user1',
-    password => 'pass1',
-    tags     => '',
-    report_file => ['MANIFEST'],
+    username     => 'user1',
+    password     => 'pass1',
+    tags         => '',
+    platform     => 'i386',
+    architecture => 'Darwin 9.4.0',
+    report_file  => ['MANIFEST'],
   ],
 ]);
 
@@ -106,10 +116,12 @@ cmp_deeply($LWP::UserAgent::last_post, [
   'https://secure/app/developer_projects/process_add_report/1',
   'Content-Type' => 'form-data',
   'Content'      => [
-    username => 'user1',
-    password => 'pass1',
-    tags     => '',
-    report_file => [$tmp->filename],
+    username     => 'user1',
+    password     => 'pass1',
+    tags         => '',
+    platform     => 'i386',
+    architecture => 'Darwin 9.4.0',
+    report_file  => [$tmp->filename],
   ],
 ]);
 ok(! -e $tmp->filename);

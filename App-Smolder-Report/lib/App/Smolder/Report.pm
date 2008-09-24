@@ -65,10 +65,12 @@ sub _upload_reports {
       $url,
       'Content-Type' => 'form-data',
       'Content'      => [
-        username => $self->username,
-        password => $self->password,
-        tags     => '',
-        report_file => [$report_file],
+        username     => $self->username,
+        password     => $self->password,
+        tags         => '',
+        platform     => $self->platform,
+        architecture => $self->architecture,
+        report_file  => [$report_file],
       ],
     );
     
@@ -167,6 +169,7 @@ sub _merge_cfg_hash {
   my @valid_settings = qw{
     server project_id
     username password
+    platform architecture
     delete
   };
   foreach my $cfg_key (@valid_settings) {
@@ -184,27 +187,32 @@ sub _merge_cfg_hash {
 sub process_args {
   my ($self) = @_;
   
-  my ($username, $password, $server, $project_id, $dry_run, $delete, $quiet);
+  my ($username, $password, $server, $project_id, $platform, $architecture);
+  my ($dry_run, $delete, $quiet);
   my $ok = GetOptions(
-    "username=s"   => \$username,
-    "password=s"   => \$password,
-    "server=s"     => \$server,
-    "project-id=i" => \$project_id,
-    "dry-run|n"    => \$dry_run,
-    "quiet"        => \$quiet,
-    "delete"       => \$delete,
+    "username=s"     => \$username,
+    "password=s"     => \$password,
+    "server=s"       => \$server,
+    "project-id=i"   => \$project_id,
+    "platform=s"     => \$platform,
+    "architecture=s" => \$architecture,
+    "dry-run|n"      => \$dry_run,
+    "quiet"          => \$quiet,
+    "delete"         => \$delete,
   );
   exit(2) unless $ok;
   
   $self->_load_configs;
   
-  $self->{username} = $username     if defined $username;
-  $self->{password} = $password     if defined $password;
-  $self->{server} = $server         if defined $server;
-  $self->{project_id} = $project_id if defined $project_id;
-  $self->{dry_run} = $dry_run       if defined $dry_run;
-  $self->{quiet} = $quiet           if defined $quiet;
-  $self->{delete} = $delete         if defined $delete;
+  $self->{username} = $username         if defined $username;
+  $self->{password} = $password         if defined $password;
+  $self->{server} = $server             if defined $server;
+  $self->{project_id} = $project_id     if defined $project_id;
+  $self->{platform} = $platform         if defined $platform;
+  $self->{architecture} = $architecture if defined $architecture;
+  $self->{dry_run} = $dry_run           if defined $dry_run;
+  $self->{quiet} = $quiet               if defined $quiet;
+  $self->{delete} = $delete             if defined $delete;
   
   return;
 }
@@ -266,14 +274,16 @@ sub new {
   return $self;
 }
 
-sub dry_run    { return $_[0]{dry_run}    }
-sub quiet      { return $_[0]{quiet}      }
-sub username   { return $_[0]{username}   }
-sub password   { return $_[0]{password}   }
-sub delete     { return $_[0]{delete}     }
-sub project_id { return $_[0]{project_id} }
-sub server     { return $_[0]{server}     }
-sub run_as_api { return $_[0]{run_as_api} }
+sub dry_run      { return $_[0]{dry_run}      }
+sub quiet        { return $_[0]{quiet}        }
+sub run_as_api   { return $_[0]{run_as_api}   }
+sub username     { return $_[0]{username}     }
+sub password     { return $_[0]{password}     }
+sub delete       { return $_[0]{delete}       }
+sub project_id   { return $_[0]{project_id}   }
+sub server       { return $_[0]{server}       }
+sub platform     { return $_[0]{platform}     }
+sub architecture { return $_[0]{architecture} }
 
 __END__
 
